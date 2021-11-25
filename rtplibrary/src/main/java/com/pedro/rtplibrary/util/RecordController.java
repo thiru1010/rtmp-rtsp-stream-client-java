@@ -183,6 +183,7 @@ public class RecordController {
     if (status == Status.RECORDING) {
       //updateFormat(this.videoInfo, videoInfo);
       //write(videoTrack, videoBuffer, this.videoInfo);
+
       write(videoTrack, videoBuffer, videoInfo);
     }
   }
@@ -192,6 +193,7 @@ public class RecordController {
     if (status == Status.RECORDING) {
      // updateFormat(this.audioInfo, audioInfo);
       //write(audioTrack, audioBuffer, this.audioInfo);
+
       write(audioTrack, audioBuffer, audioInfo);
     }
   }

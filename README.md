@@ -51,7 +51,7 @@ allprojects {
   }
 }
 dependencies {
-  	implementation 'com.github.thiru1010.rtmp-rtsp-stream-client-java:rtplibrary:2.1.5'
+  	implementation 'com.github.thiru1010.rtmp-rtsp-stream-client-java:rtplibrary:2.1.6'
 }
 
 ```

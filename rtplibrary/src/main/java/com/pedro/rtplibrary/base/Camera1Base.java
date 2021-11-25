@@ -90,6 +90,12 @@ public abstract class Camera1Base
   private int previewWidth, previewHeight;
   private final FpsListener fpsListener = new FpsListener();
 
+  //  pause | resume
+  private long pauseMoment = 0;
+  private long pauseTime = 0;
+  private final MediaCodec.BufferInfo videoInfo = new MediaCodec.BufferInfo();
+  private final MediaCodec.BufferInfo audioInfo = new MediaCodec.BufferInfo();
+
   public Camera1Base(SurfaceView surfaceView) {
     context = surfaceView.getContext();
     cameraManager = new Camera1ApiManager(surfaceView, this);
@@ -869,6 +875,7 @@ public abstract class Camera1Base
     recordController.resumeRecord();
   }
 
+  //Pause streaming
   public void pauseStreaming() {
     if (streaming) {
       pauseMoment = System.nanoTime() / 1000;
@@ -876,6 +883,7 @@ public abstract class Camera1Base
     }
   }
 
+  //Resume streaming
   public void resumeStreaming() {
     if (!streaming) {
       pauseTime += System.nanoTime() / 1000 - pauseMoment;
