@@ -181,16 +181,18 @@ public class RecordController {
       if (listener != null) listener.onStatusChange(status);
     }
     if (status == Status.RECORDING) {
-      updateFormat(this.videoInfo, videoInfo);
-      write(videoTrack, videoBuffer, this.videoInfo);
+      //updateFormat(this.videoInfo, videoInfo);
+      //write(videoTrack, videoBuffer, this.videoInfo);
+      write(videoTrack, videoBuffer, videoInfo);
     }
   }
 
   @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
   public void recordAudio(ByteBuffer audioBuffer, MediaCodec.BufferInfo audioInfo) {
     if (status == Status.RECORDING) {
-      updateFormat(this.audioInfo, audioInfo);
-      write(audioTrack, audioBuffer, this.audioInfo);
+     // updateFormat(this.audioInfo, audioInfo);
+      //write(audioTrack, audioBuffer, this.audioInfo);
+      write(audioTrack, audioBuffer, audioInfo);
     }
   }
 

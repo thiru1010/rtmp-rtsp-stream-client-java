@@ -869,6 +869,29 @@ public abstract class Camera1Base
     recordController.resumeRecord();
   }
 
+  public void pauseStreaming() {
+    if (streaming) {
+      pauseMoment = System.nanoTime() / 1000;
+      streaming = false;
+    }
+  }
+
+  public void resumeStreaming() {
+    if (!streaming) {
+      pauseTime += System.nanoTime() / 1000 - pauseMoment;
+      requestKeyFrame();
+      streaming = true;
+    }
+  }
+
+  //We can't reuse info because could produce stream issues
+  private void updateFormat(MediaCodec.BufferInfo newInfo, MediaCodec.BufferInfo oldInfo) {
+    newInfo.flags = oldInfo.flags;
+    newInfo.offset = oldInfo.offset;
+    newInfo.size = oldInfo.size;
+    newInfo.presentationTimeUs = oldInfo.presentationTimeUs - pauseTime;
+  }
+
   public RecordController.Status getRecordStatus() {
     return recordController.getStatus();
   }
@@ -877,10 +900,14 @@ public abstract class Camera1Base
 
   @Override
   public void getAacData(ByteBuffer aacBuffer, MediaCodec.BufferInfo info) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-      recordController.recordAudio(aacBuffer, info);
+    if (streaming) {
+      updateFormat(this.audioInfo, info);
+      getAacDataRtp(aacBuffer, this.audioInfo);
     }
-    if (streaming) getAacDataRtp(aacBuffer, info);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      recordController.recordAudio(aacBuffer, this.audioInfo);
+    }
   }
 
   protected abstract void onSpsPpsVpsRtp(ByteBuffer sps, ByteBuffer pps, ByteBuffer vps);
@@ -895,10 +922,14 @@ public abstract class Camera1Base
   @Override
   public void getVideoData(ByteBuffer h264Buffer, MediaCodec.BufferInfo info) {
     fpsListener.calculateFps();
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-      recordController.recordVideo(h264Buffer, info);
+    if (streaming) {
+      updateFormat(this.videoInfo, info);
+      getH264DataRtp(h264Buffer, this.videoInfo);
     }
-    if (streaming) getH264DataRtp(h264Buffer, info);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      recordController.recordVideo(h264Buffer, this.videoInfo);
+    }
   }
 
   @Override
